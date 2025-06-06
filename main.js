@@ -183,27 +183,24 @@ window.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => {
             document.getElementById("loadingScreen").style.display = "none";
 
-            if (introBox) {
-                introBox.classList.add("visible");
-            }
-            if (navBar) {
-                navBar.classList.add("visible");
-            }
         }, 2000);
     });
-
     // ✅ Capsule (player)
-    const capsule = BABYLON.MeshBuilder.CreateBox("playerCapsule", { height: 3.2, width: .5, depth: .5 }, scene);
+    const capsule = BABYLON.MeshBuilder.CreateBox("playerCapsule", { height: 1.9, width: 0.5, depth: 0.5 }, scene);
     capsule.isPickable = false;
-    capsule.isVisible = false;
+    capsule.isVisible = true;
     capsule.position = new BABYLON.Vector3(-5.5, 1.6, 10);
     capsule.physicsImpostor = new BABYLON.PhysicsImpostor(
         capsule,
         BABYLON.PhysicsImpostor.CapsuleImpostor,
-        { mass: 1, restitution: 0, friction: 100000},
+        { mass: 1, restitution: 0, friction: 100000 },
         scene
     );
-    console.log("✅ Capsule impostor applied");
+
+    // 🟩 Make it green
+    const greenMat = new BABYLON.StandardMaterial("greenMat", scene);
+    greenMat.diffuseColor = BABYLON.Color3.Green();
+    capsule.material = greenMat;
 
     // ✅ Camera
     const camera = new BABYLON.ArcRotateCamera("camera", 0, Math.PI / 2, 0, capsule.position, scene);
@@ -211,8 +208,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     camera.minZ = 0.01;
     camera.radius = 0;
 
-    camera.lowerRadiusLimit = -2;
-    camera.upperRadiusLimit = camera.radius;
+    camera.lowerRadiusLimit = 0;
+    camera.upperRadiusLimit = 5;
     camera.alpha = Math.PI*2.75;
     camera.fov = 1.2;
     scene.activeCamera = camera;
@@ -241,7 +238,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     scene.onBeforeRenderObservable.add(() => {
         if (!window.inInspectMode) {
             const isBoosting = inputMap["shift"] === true;
-            const baseSpeed = isBoosting ? 2.5 : 1.25;
+            const baseSpeed = isBoosting ? 5 : 2.5;
             const gravityAssist = -0.3;
         
             // Flatten forward vector for horizontal movement
